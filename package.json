@@ -1,18 +1,11 @@
 {
-  "name": "dyngodb2",
+  "name": "dynodb-client",
   "description": "An experiment (alpha) to get a MongoDB like interface in front of DynamoDB",
   "version": "0.2.0",
   "main": "index.js",
-  "bin": {
-    "dyngodb2": "./cli.js"
-  },
   "engines": {
     "node": ">= 0.8.0"
   },
-  "keywords": [
-    "mongodb",
-    "dynamodb"
-  ],
   "dependencies": {
     "async": "^0.2.10",
     "aws-sdk": "^2.1.4",
@@ -33,13 +26,21 @@
     "querystring": "~0.2.0",
     "ret": "~0.1.6"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/aaaristo/dyngodb.git"
-  },
-  "preferGlobal": true,
   "devDependencies": {
     "chai": "~1.8.1",
     "chai-spies": "^0.5.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/rospogeo/dynodb-client.git"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "client",
+    "database",
+    "dynamodb",
+    "mongodb",
+    "node",
+    "s3"
+  ]
 }
