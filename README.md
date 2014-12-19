@@ -1,10 +1,10 @@
-dyngodb2 [![Stories in Ready](https://badge.waffle.io/aaaristo/dyngodb.png)](http://waffle.io/aaaristo/dyngodb)
+dynodb-client
 ========
 
-An **experiment** ([alpha](http://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha)) to get a [MongoDB](http://www.mongodb.org/) *like* interface in front of [DynamoDB](http://aws.amazon.com/dynamodb/)
+Client to get a [MongoDB](http://www.mongodb.org/) *like* interface in front of [DynamoDB](http://aws.amazon.com/dynamodb/)
 and [CloudSearch](http://aws.amazon.com/cloudsearch/). Now supporting transactions as described by the [DynamoDB Transactions](https://github.com/awslabs/dynamodb-transactions/blob/master/DESIGN.md) protocol.
 
-In dyngodb2 we dropped the $ sign in favor of _. Also $version now is called _rev. The old branch is available [here](https://github.com/aaaristo/dyngodb/tree/dollar). Fixes to the old version will be released under the dyngodb npm package while the new releases are under the dyngodb2 npm package.
+In dynodb-client we dropped the $ sign in favor of _. Also $version now is called _rev. The old branch is available [here](https://github.com/aaaristo/dyngodb/tree/dollar). Fixes to the old version will be released under the dyngodb npm package while the new releases are under the dynodb-client npm package.
 
 
 ## Why?
@@ -18,13 +18,13 @@ The main stop on it for many developers would be being able to productively use 
 ## Getting started
 Playing around:
 <pre>
-$ npm install -g dyngodb2
+$ npm install -g dynodb-client
 </pre>
 <pre>
 $ export AWS_ACCESS_KEY_ID=......
 $ export AWS_SECRET_ACCESS_KEY=......
 $ export AWS_REGION=eu-west-1
-$ dyngodb2
+$ dynodb-client
 > db.createCollection('test')
 > db.test.create({ _id: 'john', name: 'John', lname: 'Smith' }) // if the _id exists create will throw an error
 > db.test.save({ name: 'Jane', lname: 'Burden' })
@@ -237,13 +237,13 @@ Suppose to have two sessions going on
 
 Session 1 connects and read John
 <pre>
-$ dyngodb2
+$ dynodb-client
 > db.test.find({ name: 'John' })
 </pre>
 
 Session 2 connects and read John
 <pre>
-$ dyngodb2
+$ dynodb-client
 > db.test.find({ name: 'John' })
 </pre>
 
@@ -439,7 +439,7 @@ Some automatically generated attributes:
 
 ### Transactions
 
-In dyngodb2 there is basic support for transactions take a look at the [tests] (https://github.com/aaaristo/dyngodb/blob/master/test/transaction.test.js). 
+In dynodb-client there is basic support for transactions take a look at the [tests] (https://github.com/aaaristo/dyngodb/blob/master/test/transaction.test.js). 
 It is an initial implementation of the protocol described [here](https://github.com/awslabs/dynamodb-transactions/blob/master/DESIGN.md).
 All the db.* APIs are still *non-transactional*, while tx.* APIs: that are really 
 the same as db.* behaves in a transactional way. Once you get a transaction by
@@ -471,14 +471,14 @@ db.test.save([{ name: 'John' },{ name: 'Jane' }])
 </pre>
 
 <pre>
-dyngodb2 --somename Jake  &lt; commands.txt
+dynodb-client --somename Jake  &lt; commands.txt
 </pre>
 
 ### Streams (for raw dynamodb items)
 
 Example of moving items between tables with streams (10 by 10):
 <pre>
-dyngodb2
+dynodb-client
 > t1= db._dyn.stream('table1')
 > t2= db._dyn.stream('table2')
 > t1.scan({ limit: 10 }).pipe(t2.mput('put')).on('finish',function () { console.log('done'); })
@@ -488,7 +488,7 @@ dyngodb2
 
 Example of loading a csv file (see [node-csv](https://github.com/wdavidw/node-csv) for options)
 <pre>
-dyngodb2
+dynodb-client
 > csv('my/path/to.csv',{ delimiter: ';', escape: '"' },['id','name','mail'])
 > last
 > db.mytbl.save(last)
@@ -498,7 +498,7 @@ dyngodb2
 
 Example of loading an xlsx file
 <pre>
-dyngodb2
+dynodb-client
 > workbook= xlsx('my/path/to.xlsx') 
 > contacts= workbook.sheet('Contacts').toJSON(['id','name','mail'])
 > db.mytbl.save(contacts)
@@ -511,7 +511,7 @@ dyngodb will go through the required steps until it reaches
 the required value.
 
 <pre>
-dyngodb2
+dynodb-client
 > db.mytbl.modify(1024,1024)
 > db.mytbl.indexes[0].modify(1024,1024)
 </pre>
@@ -520,14 +520,14 @@ dyngodb2
 
 Export:
 <pre>
-dyngodb2
+dynodb-client
 > db.mytbl.find()
 > db.cleanup(last).clean(function (d) { gson('export.gson',d); });
 </pre>
 
 Import:
 <pre>
-dyngodb2
+dynodb-client
 > db.mytbl.save(gson('export.gson'));
 </pre>
 
@@ -538,7 +538,7 @@ is able to serialize cyrcular object graphs in a non-recursive way.
 
 Backup:
 <pre>
-dyngodb2
+dynodb-client
 > db.mytbl.backup({ bucket: 'mybucket' })
 </pre>
 
@@ -546,19 +546,19 @@ This will create an S3 object named mybucket/table/time.bck
 
 Restore:
 <pre>
-dyngodb2
+dynodb-client
 > db.createCollection('mytbl')
 > db.mytbl.restore({ bucket: 'mybucket', file: 'mybucket/table/time.bck' });
 </pre>
 
-### Q&D migration from dyngodb to dyngodb2
+### Q&D migration from dyngodb to dynodb-client
 
 <pre>
 dyngodb
 > db.mytbl.find()
 > db.cleanup(last).clean(function (d) { gson('export.gson',d); });
 cat export.gson | sed 's/"$id"\:/"_id":/g' > export2.gson
-dyngodb2
+dynodb-client
 > db.mytbl.save(gson('export2.gson'));
 </pre>
 
