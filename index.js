@@ -5,6 +5,8 @@ var dyno = require('./lib/dyn.js'),
     cclone = require('circularclone'),
     async = require('async');
 
+var defer = require("promised-io/promise").Deferred;
+
 var _parser = require('./lib/parser'),
     _finder = require('./lib/finder'),
     _refiner = require('./lib/refiner'),
@@ -92,16 +94,20 @@ var dyngo = module.exports = function (opts, cb) {
         };
 
     db.createCollection = function (name, p) {
-        var p = p || dyn.promise(),
+        var deferred = defer(),
+            p = p || dyn.promise(),
             _success = function () {
                 dyn.describeTable(name, function (err, data) {
                     if (!err) {
                         db[name] = configureTable({_dynamo: data.Table, indexes: []});
                         p.trigger.success();
+                        console.log('caraio de tabela '+name);
+                        deferred.resolve(db[name]);
                     }
-                    else
+                    else {
                         p.trigger.error(err);
-
+                        console.log('erro', err);
+                    }
                 });
             };
 
@@ -131,23 +137,17 @@ var dyngo = module.exports = function (opts, cb) {
                 else
                     p.trigger.error(err);
             });
-
-        return p;
+console.log('fdp');
+        var d = deferred.promise;
+        console.log('caraio '+name);
+        return d;
     };
 
     db.collection = function (name) {
-        var p = dyn.promise();
-        dyn.describeTable(name, function (err, data) {
-            if (!err) {
-                db[name] = configureTable({_dynamo: data.Table, indexes: []});
-                p.trigger.success();
-            }
-            else
-                db.createCollection(name, p);
-
-        });
-
-        return p;
+        if (db[name])
+            return db[name];
+        else
+            return db.createCollection(name);
     };
 
     db.ensureTransactionTable = function (topts) {

@@ -23,6 +23,7 @@
     "node-uuid": "~1.4.0",
     "node-zip": "^1.1.0",
     "optimist": "~0.6.0",
+    "promised-io": "^0.3.4",
     "querystring": "~0.2.0",
     "ret": "~0.1.6"
   },
